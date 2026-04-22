@@ -23,7 +23,7 @@ exports.allClearedNotes = catchAsync(async (req, res, next) => {
 
   if (!_id)
     return next(
-      new appError("Proprietor Id missing from client side, retry.", 400)
+      new appError("Proprietor Id missing from client side, retry.", 400),
     );
 
   const doc = await debtNote.find({
@@ -41,7 +41,7 @@ exports.allClearedNotes = catchAsync(async (req, res, next) => {
 exports.createNote = catchAsync(async (req, res, next) => {
   if (!req.body)
     return next(
-      new appError("Content required to create note is missing, retry.", 400)
+      new appError("Content required to create note is missing, retry.", 400),
     );
 
   const doc = await debtNote.create(req.body);
@@ -65,7 +65,7 @@ exports.notePaidController = catchAsync(async (req, res, next) => {
     {
       runValidators: true,
       new: true,
-    }
+    },
   );
 
   //2. adding this to paidNoteModel.
@@ -146,14 +146,14 @@ exports.deleteNote = catchAsync(async (req, res, next) => {
 
   if (!noteId) {
     return next(
-      new appError("Error occured while deleting, something missing", 404)
+      new appError("Error occured while deleting, something missing", 404),
     );
   }
 
   const data = await debtNote.findOneAndUpdate(
     { _id: noteId },
     { deleted: true },
-    { runValidators: true, new: true }
+    { runValidators: true, new: true },
   );
 
   res.status(200).json({
@@ -175,7 +175,7 @@ exports.acceptingNoteMiddleware = catchAsync(async (req, res, next) => {
     {
       runValidators: true,
       new: true,
-    }
+    },
   );
 
   res.status(200).json({
@@ -190,8 +190,8 @@ exports.getAllPendingNotes = catchAsync(async (req, res, next) => {
   if (!customerNumber)
     return next(
       new Error(
-        "Some error occured while checking data from user side, check and retry."
-      )
+        "Some error occured while checking data from user side, check and retry.",
+      ),
     );
 
   //1. All accepted but not paid notes.
@@ -223,7 +223,7 @@ exports.getAllClearedNotes = catchAsync(async (req, res, next) => {
 
   if (!contactNumber)
     return next(
-      new appError("Contact number missing from client side, retry.", 400)
+      new appError("Contact number missing from client side, retry.", 400),
     );
 
   const doc = await debtNote.find({
@@ -246,6 +246,7 @@ exports.getAllSpecific_CustomerNotes = catchAsync(async (req, res, next) => {
 
   const data = await debtNote.find({
     customerNumber: { $in: customerNumber },
+    proprietorId: { $in: req.user._id },
   });
 
   res.status(200).json({
