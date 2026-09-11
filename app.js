@@ -12,16 +12,31 @@ const appError = require("./Utilities/appError");
 const errorController = require("./Controllers/ErrorController");
 
 const app = express();
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, or Postman)
+    if (!origin) return callback(null, true);
+
+    // Regex checks if origin is localhost or 127.0.0.1 on ANY port,
+    // OR allows any other deployed domain.
+    // Replace `true` with specific domain checks if you want to restrict production later.
+    return callback(null, true);
+  },
+  credentials: true, // Allows cookies / authorization headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
 
 // Global middleware (CORS) (Cross Origin Resource Sharing)
 app.use(
-  cors({
+  cors(corsOptions),
+);
+/* {
     origin: ["http://localhost:5173", "https://mycrdit.netlify.app"],
     credentials: true,
     exposedHeaders: ["SET-COOKIE"],
     methods: ["PATCH", "GET", "PUT", "POST", "HEAD", "DELETE"],
-  }),
-);
+  }*/
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
